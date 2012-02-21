@@ -334,7 +334,7 @@ au FileType xml           let b:vimgrep_files="**/*.xml"
 " "}}}
 
 " C/C++ autocommands "{{{
-au! BufRead,BufNewFile *.h,*.c,*.cpp    set fenc=gbk ff=dos
+au! BufNewFile *.h,*.c,*.cpp    set fenc=gbk ff=dos
 
 au FileType c,cpp inoremap  <buffer>  /**<CR>     /**<CR><CR>/<Esc>kA<Space>@brief<Space>
 au FileType c,cpp inoremap  <buffer>  /**<        /**<<Space>@brief<Space><Space>*/<Left><Left><Left>
@@ -400,6 +400,7 @@ au FileType python set smartindent cinwords=if,elif,else,for,while,try,except,fi
 let s:disabled_bundles = []
 
 " Bundle: DrawIt
+" Bundle: AutoTag
 
 " Indents " {{{
 " Bundle: indentpython.vim--nianyang
@@ -545,7 +546,7 @@ endif
 map <leader>cw :cw<cr>
 map <F3> :cp<cr>
 map <F4> :cn<cr>
-
+set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 " lookup file
 " http://www.vim.org/scripts/script.php?script_id=1581
