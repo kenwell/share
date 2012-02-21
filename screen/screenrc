@@ -1,0 +1,45 @@
+bind j focus down
+bind k focus up
+bind t focus top
+bind b focus bottom
+
+# I know about screen.  I don't need to see it every time I start the program.
+# (Which is, admittedly, rarely.)
+startup_message off
+# I like a large scrollback
+defscrollback 5000
+# Run everything in UTF-8.
+defutf8 on
+# If a window goes unresponsive, don't block the whole session waiting for it.
+defnonblock on
+
+# Make screen messages stand out a little more - black on bright green.
+sorendition "+b kG"
+
+##termcapinfo xterm 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
+#termcapinfo xterm*|Eterm|mlterm 'hs:ts=\E]0;:fs=\007:ds=\E]0;screen\007'
+#defhstatus "screen  (t) | $USER@H"
+#hardstatus off
+#
+## 256 color xterm
+#attrcolor b ".I"
+#termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+#defbce "on"
+
+#hardstatus alwayslastline "%{=b}%{G} Screen(s): %{b}%w %=%{kG}%C%A  %D, %M/%d/%Y "
+#hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+#hardstatus alwayslastline "%{+b kr}[ %H ] %{kw} Load: %l %-=%  %{kb} %c:%s  %d.%m.%Y "
+#hardstatus string "%{+b Rk}(%{-b g}$LOGNAME@%H%{+b R}) (%{-b g}%C %a%{+b R}) %{-b g} %n %t %h"
+#hardstatus alwayslastline "%{-s}%{= kB}%-Lw%{= .w}%n%f* %t%{-}%+Lw%< %=%Y-%M-%d %c:%s %D"
+#hardstatus alwayslastline "%{= kB}[$LOGNAME@%H] %-Lw%{= .G}%n%f* %t%{-}%+Lw%< %=%Y-%m-%d %c:%s %D"
+
+# 黑底
+#hardstatus alwayslastline "%{= kB}%{c}[$LOGNAME@%H]%{-} %-Lw%{= .G}%n%f* %t%{-}%+Lw%< %{c}%=%Y-%m-%d %c:%s %D"
+
+# color test
+#hardstatus alwayslastline "%{= kw}kw %{= rw}rw %{= gw}gw %{= yw}yw %{= bw}bw %{= mw}mw %{= cw}cw %{= ww}ww %{= dw}dw %{= Kw}Kw %{= Rw}Rw %{= Gw}Gw %{= Yw}Yw %{= Bw}Bw %{= Mw}Mw %{= Cw}Cw %{= Ww}Ww %{= Dw}Dw"
+#hardstatus alwayslastline "%{= gd}%{k}kkk %{r}rrr %{g}ggg %{y}yyy %{b}bbb %{m}mmm %{c}ccc %{w}www %{K}KKK %{R}RRR %{G}GGG %{Y}YYY %{B}BBB %{M}MMM %{C}CCC %{W}WWW %{d}ddd %{D}DDD"
+# 绿底白字，当前窗口使用缺省背景
+#hardstatus alwayslastline "%{= gd}%{K}[$LOGNAME@%H] %{cd}%-Lw%{-}%{dd}%n%f* %t%{-}%{cd}%+Lw%{-}%< %{K}%=%Y-%m-%d %c:%s %D"
+#hardstatus alwayslastline "%{= gd}%{y}[$LOGNAME@%H] %{d}%-Lw%{-}%{dd}%n%f* %t%{-}%{d}%+Lw%{-}%< %{y}%=%Y-%m-%d %c:%s %D"
+hardstatus alwayslastline "%{= gd}%{B}[$LOGNAME@%H] %{d}%-Lw%{-}%{dd}%n%f* %t%{-}%{d}%+Lw%{-}%< %{B}%=%Y-%m-%d %c:%s %D"
