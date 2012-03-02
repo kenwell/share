@@ -1,0 +1,4 @@
+#!/bin/sh
+export SSCC_COMPONENT_LIBS_ROOT=$HOME/program/tgw/03srccode/03lib 
+export BOOST_BUILD_PATH=${SSCC_COMPONENT_LIBS_ROOT}/tools/build/v2
+${SSCC_COMPONENT_LIBS_ROOT}/bjam -j2 "$@"
