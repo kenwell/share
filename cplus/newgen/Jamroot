@@ -1,0 +1,96 @@
+# 本项目使用了组件库，使用前需要设置两个环境变量
+#
+# - SSCC_COMPONENT_LIBS_ROOT : 应指向组件库目录（包含boost及sscc_libs的目录）
+# - BOOST_BUILD_PATH         : 应指向组件库中Boost.Build的目录，一般是在上述目录的/tools/build/v2子目录下
+#
+# 设置了上述变量后，就可以调用bjam进行编译。
+# bjam的-j参数可用于指定同时并发编译的进程数。
+#
+# Linux下可参考以下脚本：
+# #~/bin/sh
+# export SSCC_COMPONENT_LIBS_ROOT=$HOME/program/0703ComponentsLib/trunk/001srccode
+# export BOOST_BUILD_PATH=${SSCC_COMPONENT_LIBS_ROOT}/tools/build/v2
+# ${SSCC_COMPONENT_LIBS_ROOT}/bjam -j6 "$@"
+#
+# Windows下可参考以下批处理：
+# @echo off
+# set SSCC_COMPONENT_LIBS_ROOT=D:\program\0703ComponentsLib\trunk\01srccode\
+# set BOOST_BUILD_PATH=%SSCC_COMPONENT_LIBS_ROOT%\tools\build\v2
+# %SSCC_COMPONENT_LIBS_ROOT%\bjam.exe -j4 %*
+
+import modules ;
+
+modules.poke : USE_BOOST_LOG : 1 ;
+
+if ! $(SSCC_COMPONENT_LIBS_ROOT)
+{   
+    SSCC_COMPONENT_LIBS_ROOT = [ modules.peek : SSCC_COMPONENT_LIBS_ROOT ] ;   
+}    
+
+use-project /sscc_component_libs : $(SSCC_COMPONENT_LIBS_ROOT) ;
+
+exe cjx
+    : cjx.cpp cjx_order.cpp cjx_tnovr.cpp
+      /sscc_libs/log//sscc_log
+      /boost//headers
+      /boost/system//boost_system
+      /boost/thread//boost_thread
+      /boost/program_options//boost_program_options
+    : <threading>multi
+      <link>static
+    ;
+
+exe tworder
+    : tw_order.cpp tw_order_server.cpp
+      /sscc_libs/log//sscc_log
+      /boost//headers
+      /boost/system//boost_system
+      /boost/thread//boost_thread
+      /boost/program_options//boost_program_options
+    : <threading>multi
+      <link>static
+    ;
+
+exe twtnovr
+    : tw_tnovr.cpp tw_tnovr_server.cpp
+      /sscc_libs/log//sscc_log
+      /boost//headers
+      /boost/system//boost_system
+      /boost/thread//boost_thread
+      /boost/program_options//boost_program_options
+    : <threading>multi
+      <link>static
+    ;
+
+exe twsuper
+    : tw_super.cpp
+      /sscc_libs/log//sscc_log
+      /boost//headers
+      /boost/system//boost_system
+      /boost/thread//boost_thread
+      /boost/program_options//boost_program_options
+    : <threading>multi
+      <link>static
+    ;
+    
+exe twcomm
+    : tw_comm.cpp tw_comm_order.cpp tw_comm_tnovr.cpp
+      /sscc_libs/log//sscc_log
+      /boost//headers
+      /boost/system//boost_system
+      /boost/thread//boost_thread
+      /boost/program_options//boost_program_options
+    : <threading>multi
+      <link>static
+    ;
+
+exe client
+    : client.cpp
+      /sscc_libs/log//sscc_log
+      /boost//headers
+      /boost/system//boost_system
+      /boost/thread//boost_thread
+      /boost/program_options//boost_program_options
+    : <threading>multi
+      <link>static
+    ;
