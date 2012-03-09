@@ -85,10 +85,8 @@ void TwCommTnovr::Report()
 {
     FILE* out;
     
-    std::stringstream sstr;
-    sstr << "result" << m_groupNo << ".txt";
-
-    if( ( out = fopen(sstr.str().c_str(), "wt") ) == NULL )
+    std::string filename = boost::str( format("result%03d.txt") % m_groupNo );
+    if( ( out = fopen(filename.c_str(), "wt") ) == NULL )
     {
         fprintf(stderr, "canot open file result.txt" );
         return;
@@ -120,7 +118,6 @@ void TwCommTnovr::HandleConnect(const boost::system::error_code& error)
 
     if (!error)
     {
-        m_isReady = true;
         MsgHeader *msgHeader = (MsgHeader*)m_sendData;
         msgHeader->groupNo = m_groupNo;
         msgHeader->bodySize = 10;
@@ -171,7 +168,7 @@ void TwCommTnovr::HandleReadBody(const boost::system::error_code& error)
     {
         if(m_recvMsgs.size() == (size_t)m_msgNum)
         {
-            SSCC_MLOG_INFO(m_logger, "Calc msg latency");
+            SSCC_MLOG_INFO(m_logger, format("Group:%d Calc msg latency") % m_groupNo );
             m_isRun = false;
             Report();
         }
@@ -195,6 +192,7 @@ void TwCommTnovr::HandleWrite(const boost::system::error_code& error)
 {
     if (!error)
     {
+        m_isReady = true;
         async_read(m_socket,
                    buffer(m_recvData, sizeof(MsgHeader)),
                    m_strand.wrap(

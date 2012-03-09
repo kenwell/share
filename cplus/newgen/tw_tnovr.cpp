@@ -1,6 +1,7 @@
 
 #include "tw_tnovr.h"
 #include <iostream>
+#include <boost/thread.hpp>
 #include <boost/format.hpp>
 #include <sscc/log/config.h>
 
@@ -170,22 +171,31 @@ int main( int argc, char** argv )
 {
     try
     {
-        if (argc != 4)
+        if (argc != 5)
         {
-            std::cerr << "Usage: twtnovr <cjxhost> <cjxport> <tnovrport>\n";
+            std::cerr << "Usage: twtnovr <cjxhost> <cjxport> <tnovrport> <maxgroup>\n";
             return 1;
         }
         SSCC_LOG_CONFIG_CONSOLE();
         ::boost::log::core::get()->set_filter(
             ::boost::log::filters::attr< ::sscc::log::SeverityLevel >("Severity") >= ::sscc::log::SEVERITY_LEVEL_DEBUG);
 
-        boost::asio::io_service io_service;
+        io_service clientIoService;
+        io_service serverIoService;
 
-        TwTnovrServer tnovrServer(io_service, atoi(argv[3]));
-        TnovrClient c(io_service, std::string(argv[1]), atoi(argv[2]), tnovrServer);
+        TwTnovrServer tnovrServer(serverIoService, atoi(argv[3]), atoi(argv[4]));
+        TnovrClient c(clientIoService, std::string(argv[1]), atoi(argv[2]), tnovrServer);
         c.Start();
-        io_service.run();
 
+        boost::thread_group threadGroup;
+        for(int i = 0; i < 1; i++)
+        {
+            threadGroup.create_thread(boost::bind(&io_service::run, &serverIoService));
+        }
+
+        clientIoService.run();
+
+        threadGroup.join_all();
 
     }
     catch (std::exception& e)

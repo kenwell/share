@@ -51,7 +51,7 @@ int main( int argc, char** argv )
         while(!order.IsReady() || !tnovr.IsReady())
             usleep(1000);
         
-
+        sleep(2);
 
         double time = (double)1000 / (double)speed;
 

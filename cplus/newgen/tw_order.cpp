@@ -198,25 +198,24 @@ int main( int argc, char** argv )
         ::boost::log::core::get()->set_filter(
             ::boost::log::filters::attr< ::sscc::log::SeverityLevel >("Severity") >= ::sscc::log::SEVERITY_LEVEL_DEBUG);
 
-        boost::asio::io_service io_service;
+        io_service clientIoService;
+        io_service serverIoService;
 
-        OrderClient c(io_service, std::string(argv[1]), atoi(argv[2]));
-        TwOrderServer orderServer(io_service, atoi(argv[3]), c);
+        OrderClient c(clientIoService, std::string(argv[1]), atoi(argv[2]));
+
+        TwOrderServer orderServer(serverIoService, atoi(argv[3]), c);
         c.Start();
 
-        io_service.run();
-        /*boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
-        MsgHeader header;
-        for(int i = 0; i < 2; i++)
+        
+        boost::thread_group threadGroup;
+        for(int i =0; i < 1; i++)
         {
-            header.no = i;
-            header.groupNo = i;
-            header.bodySize = 100;
-            c.Write(header);
+            threadGroup.create_thread(boost::bind(&io_service::run, &serverIoService));
         }
+        
+        clientIoService.run();
 
-        t.join();*/
-
+        threadGroup.join_all();
     }
     catch (std::exception& e)
     {

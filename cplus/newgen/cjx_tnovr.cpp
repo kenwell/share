@@ -143,8 +143,6 @@ void TnovrServer::HandleWrite(const boost::system::error_code& error)
 {
     if (!error)
     {
-        if(!m_writeMsgs.empty())
-            m_writeMsgs.pop_front();
         if (!m_writeMsgs.empty())
         {
             memcpy(m_sendData, &(m_writeMsgs.front()), sizeof(MsgHeader) );

@@ -13,6 +13,7 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/enable_shared_from_this.hpp>
@@ -36,8 +37,9 @@ public:
 
     void Start();
     void Write(const MsgHeader& msg);
+    void Write();
     void Close();
-
+    void SetMsgQueue(MsgHeaderQueue *pwriteMsgs);
 private:
 
     void HandleReadHeader(const boost::system::error_code& error);
@@ -56,7 +58,7 @@ private:
     boost::asio::io_service& m_ioService;
     tcp::socket m_socket;
     TwTnovrServer *m_tnovrServer;
-    MsgHeaderQueue m_writeMsgs;
+    MsgHeaderQueue *m_writeMsgs;
     enum { max_length = 1024 };
     char m_sendData[ max_length ];
     char m_recvData[max_length];
@@ -70,7 +72,7 @@ typedef boost::shared_ptr<Session> SessionPtr;
 class TwTnovrServer
 {
 public:
-    TwTnovrServer(boost::asio::io_service& ioService, short port);
+    TwTnovrServer(boost::asio::io_service& ioService, short port, int maxGroupNum);
 
     void AddGroupToSession(int32_t groupNo, SessionPtr session);
     void RemoveSession(int32_t groupNo);
@@ -80,12 +82,17 @@ public:
 private:
     void HandleAccept(SessionPtr newSession,
                       const boost::system::error_code& error);
+    void DoWrite(int32_t groupNo, const MsgHeader& msgHeader);
+    void DoAddGroup(int32_t groupNo, SessionPtr session);
 private:
     SSCC_DECLARE_MEMBER_LOGGER(m_logger);
+    boost::asio::strand m_strand;
     boost::asio::io_service& m_ioService;
     tcp::acceptor m_acceptor;
     std::vector<SessionPtr> m_sessions;
     std::map<int32_t, SessionPtr> m_groupToSession;
+    int m_maxGroupNum;
+    boost::shared_array<MsgHeaderQueue> m_msgHeaderQueues;
 };
 
 
