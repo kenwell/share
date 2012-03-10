@@ -147,8 +147,8 @@ void Session::HandleWrite(const boost::system::error_code& error)
     if (!error)
     {
 //        SSCC_MLOG_INFO(m_logger, "HandleWrite");
-        if(!m_writeMsgs->empty())
-            m_writeMsgs->pop_front();
+        //if(!m_writeMsgs->empty())
+        m_writeMsgs->pop_front();
         if (!m_writeMsgs->empty())
         {
             memcpy(m_sendData, &(m_writeMsgs->front()), sizeof(MsgHeader) );

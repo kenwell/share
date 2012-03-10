@@ -6,6 +6,7 @@
 #include "cjx_order.h"
 
 
+
 using namespace boost::asio;
 
 
@@ -19,6 +20,7 @@ int main(int argc, char* argv[])
       return 1;
     }
     SSCC_LOG_CONFIG_CONSOLE();
+    
     ::boost::log::core::get()->set_filter(
         ::boost::log::filters::attr< ::sscc::log::SeverityLevel >("Severity") >= ::sscc::log::SEVERITY_LEVEL_DEBUG);
 

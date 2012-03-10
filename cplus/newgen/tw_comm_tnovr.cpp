@@ -85,10 +85,10 @@ void TwCommTnovr::Report()
 {
     FILE* out;
     
-    std::string filename = boost::str( format("result%03d.txt") % m_groupNo );
-    if( ( out = fopen(filename.c_str(), "wt") ) == NULL )
+    std::string filename = boost::str( format("./result/result%03d.txt") % m_groupNo );
+    if( ( out = fopen(filename.c_str(), "w+") ) == NULL )
     {
-        fprintf(stderr, "canot open file result.txt" );
+        SSCC_MLOG_ERROR(m_logger, format("can not open %1") % filename);
         return;
     }
 
@@ -170,7 +170,6 @@ void TwCommTnovr::HandleReadBody(const boost::system::error_code& error)
         {
             SSCC_MLOG_INFO(m_logger, format("Group:%d Calc msg latency") % m_groupNo );
             m_isRun = false;
-            Report();
         }
         else
             async_read(m_socket,

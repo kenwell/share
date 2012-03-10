@@ -8,7 +8,13 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/mapped_region.hpp>
 
+#include "tw_def.h"
+
+
+using namespace boost::interprocess;
 using namespace std;
 
 class TwCommArgs
@@ -25,8 +31,21 @@ public:
     std::string bodySize;
 };
 
+struct shm_remove
+{
+    shm_remove()
+    {
+        shared_memory_object::remove(SHMNAME);
+    }
+    
+    ~shm_remove()
+    {
+        shared_memory_object::remove(SHMNAME);
+    }
+};
 
 int GenSubProc(TwCommArgs commArgs);
+
 
 int main( int argc, char** argv )
 {
@@ -36,6 +55,7 @@ int main( int argc, char** argv )
         return 1;
     }
 
+    //初始化参数
     TwCommArgs commArgs;
     commArgs.procName = "twcomm";
     commArgs.orderHost = argv[1];
@@ -46,9 +66,25 @@ int main( int argc, char** argv )
     commArgs.speed = argv[6];
     commArgs.bodySize = argv[8];
 
-
     int groupNo = atoi(argv[7]);
 
+    //初始化共享内存
+    shm_remove remove;
+    TwControlShm *control = NULL;
+    shared_memory_object shm(create_only, SHMNAME, read_write);
+    shm.truncate(sizeof(TwControlShm));
+    mapped_region region(shm, read_write);
+    control = static_cast<TwControlShm*>(region.get_address());
+    if( control == NULL)
+    {
+        std::cerr << "create shm error!" << endl;
+        return -1;
+    }
+    memset(control, 0, sizeof(TwControlShm));
+    control->commNum = groupNo;
+
+    //根据group no生成通信子进程
+    std::cout << "Begin to generate " << groupNo << " twcomm processes" << std::endl;
     for(int i = 0; i < groupNo; i++)
     {
         stringstream sstr;
@@ -60,6 +96,43 @@ int main( int argc, char** argv )
             return -1;
         }
     }
+
+    //判断所有线程可以发送
+    std::cout << "Begin to judge all twcomm whether is ready to send messages" << std::endl;
+    while(true)
+    {
+        int num = 0;
+        for(int i = 0; i < groupNo; i++)
+        {
+            if(control->isReady[i] == 1)
+                num++;
+        }
+
+        if(num == groupNo)
+            break;
+        sleep(1);
+    }
+    control->allReady = 1;
+
+    std::cout << "Twcomm begin to send messages" << std::endl;
+
+    //判断所有线程是否完成数据发送
+    while(true)
+    {
+        int num = 0;
+        for(int i = 0; i < groupNo; i++)
+        {
+            if(control->isFinish[i] == 1)
+                num++;
+        }
+
+        if(num == groupNo)
+            break;
+        std::cout << num << " twcomm process finish sending message" << std::endl;
+        sleep(1);
+    }
+    control->allFinish = 1;
+    std::cout << "Finish message sending";
 
 }
 
@@ -93,3 +166,5 @@ int GenSubProc( TwCommArgs commArgs )
     }
     return(0);
 } 
+
+

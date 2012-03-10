@@ -10,6 +10,10 @@
 #include <sys/time.h>
 #include <boost/cstdint.hpp>
 
+
+#define MAXCOMMNUM 1000
+#define SHMNAME    "control"
+
 struct TimeRecord
 {
     timeval clientSendTime;
@@ -26,6 +30,15 @@ struct MsgHeader
     TimeRecord time;
 };
 
+struct TwControlShm
+{
+    char allReady;
+    int32_t commNum;
+    char isReady[MAXCOMMNUM];
+    char isFinish[MAXCOMMNUM];
+    char allFinish;
+    int32_t sendMsgs[MAXCOMMNUM];
+};
 
 #endif
 

@@ -57,9 +57,8 @@ void OrderServer::HandleReadHeader(const boost::system::error_code& error)
 {
     if(!error)
     {
-    //    SSCC_MLOG_INFO(m_logger, "Read Header");
         MsgHeader *msgHeader = (MsgHeader*)m_data;
-        SSCC_MLOG_INFO(m_logger, format("msg header gno:%d, no:%d") % msgHeader->groupNo % msgHeader->no);
+        //SSCC_MLOG_INFO(m_logger, format("msg header gno:%d, no:%d") % msgHeader->groupNo % msgHeader->no);
         if( msgHeader->bodySize > 0 )
         {
             gettimeofday(&(msgHeader->time.serverRecvTime), NULL);
