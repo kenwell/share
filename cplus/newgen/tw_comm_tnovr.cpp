@@ -17,7 +17,6 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/program_options.hpp>
 
 using namespace boost::asio;
 
@@ -38,6 +37,8 @@ using boost::accumulators::p_square_quantile;
 using boost::accumulators::quantile;
 using boost::accumulators::quantile_probability;
 using boost::accumulators::accumulator_set;
+
+namespace tag = boost::accumulators::tag;
 
 TwCommTnovr::TwCommTnovr(boost::asio::io_service& ioService, std::string ipAddress, short port, int32_t msgNum, int32_t groupNo)
  :  m_logger(SSCC_INIT_MEMBER_LOGGER("TwCommTnovr")),
@@ -81,35 +82,10 @@ bool TwCommTnovr::IsRun()
     return m_isRun;
 }
 
-void TwCommTnovr::Report()
+ResultTime TwCommTnovr::Report()
 {
-    FILE* out;
-    
-    std::string filename = boost::str( format("./result/result%03d.txt") % m_groupNo );
-    if( ( out = fopen(filename.c_str(), "w+") ) == NULL )
-    {
-        SSCC_MLOG_ERROR(m_logger, format("can not open %1") % filename);
-        return;
-    }
-
-    fprintf( out, "no, clientSendTime, ServerRecTime, ServerSendTime, ClientRecvTime, timespan\n" );
-    size_t i;
-    for( i = 0; i < m_recvMsgs.size(); i++)
-    {
-        TimeRecord rec = m_recvMsgs[i].time;
-        fprintf( out, "%d, %ld, %ld, %ld, %ld, %ld\n", 
-                 m_recvMsgs[i].no,
-                 rec.clientSendTime.tv_sec * 1000000 + rec.clientSendTime.tv_usec,
-                 rec.serverRecvTime.tv_sec * 1000000 + rec.serverRecvTime.tv_usec,
-                 rec.serverSendTime.tv_sec * 1000000 + rec.serverSendTime.tv_usec,
-                 rec.clientRecvTime.tv_sec * 1000000 + rec.clientRecvTime.tv_usec,
-                 rec.clientRecvTime.tv_sec * 1000000 + rec.clientRecvTime.tv_usec - (rec.clientSendTime.tv_sec * 1000000 + rec.clientSendTime.tv_usec)
-               );
-    }
-
-    if ( out != NULL )
-        fclose( out );
-
+    WriteResult();
+    return StatisResult();
 }
 
 void TwCommTnovr::HandleConnect(const boost::system::error_code& error)
@@ -214,5 +190,71 @@ void TwCommTnovr::DoClose()
     m_isRun = false;
 }
 
+void TwCommTnovr::WriteResult()
+{
+    FILE* out;
+    
+    std::string filename = boost::str( format("./result/result%03d.txt") % m_groupNo );
+    if( ( out = fopen(filename.c_str(), "w+") ) == NULL )
+    {
+        SSCC_MLOG_ERROR(m_logger, format("can not open %1") % filename);
+        return;
+    }
+
+    //fprintf( out, "no, clientSendTime, ServerRecTime, ServerSendTime, ClientRecvTime, timespan\n" );
+    size_t i;
+    for( i = 0; i < m_recvMsgs.size(); i++)
+    {
+        TimeRecord rec = m_recvMsgs[i].time;
+        fprintf( out, "%d, %ld, %ld, %ld, %ld, %ld, %ld\n", 
+                 m_recvMsgs[i].no,
+                 rec.clientSendTime.tv_sec * 1000000 + rec.clientSendTime.tv_usec,
+                 rec.serverRecvTime.tv_sec * 1000000 + rec.serverRecvTime.tv_usec,
+                 rec.serverSendTime.tv_sec * 1000000 + rec.serverSendTime.tv_usec,
+                 rec.clientRecvTime.tv_sec * 1000000 + rec.clientRecvTime.tv_usec,
+                 rec.clientRecvTime.tv_sec * 1000000 + rec.clientRecvTime.tv_usec - (rec.clientSendTime.tv_sec * 1000000 + rec.clientSendTime.tv_usec),
+                 rec.serverSendTime.tv_sec * 1000000 + rec.serverSendTime.tv_usec - (rec.serverRecvTime.tv_sec * 1000000 + rec.serverRecvTime.tv_usec)
+               );
+    }
+
+    if ( out != NULL )
+        fclose( out );
+}
+
+ResultTime TwCommTnovr::StatisResult()
+{
+    typedef accumulator_set<double, stats<tag::p_square_quantile, tag::tail_quantile<left>, tag::mean, tag::max, tag::min> > accumulator_t;
+
+    accumulator_t accSvrProcTime( quantile_probability=0.90, tag::tail<left>::cache_size=m_recvMsgs.size());
+    accumulator_t accRTTTime( quantile_probability=0.90, tag::tail<left>::cache_size=m_recvMsgs.size());
+
+    // 第一个报文会引起Server端的内存分配，消耗比较多的时间，因此忽略第一个报文
+    for (size_t i=0; i<m_recvMsgs.size(); ++i)
+    {
+        const TimeRecord& tr = m_recvMsgs[i].time;
+
+        uint64_t clientSendTime = static_cast<uint64_t>(tr.clientSendTime.tv_sec) * 1000000 + tr.clientSendTime.tv_usec;
+        uint64_t clientRecvTime = static_cast<uint64_t>(tr.clientRecvTime.tv_sec) * 1000000 + tr.clientRecvTime.tv_usec;
+        uint64_t serverRecvTime = static_cast<uint64_t>(tr.serverRecvTime.tv_sec) * 1000000 + tr.serverRecvTime.tv_usec;
+        uint64_t serverSendTime = static_cast<uint64_t>(tr.serverSendTime.tv_sec) * 1000000 + tr.serverSendTime.tv_usec;
 
 
+        accSvrProcTime(serverSendTime - serverRecvTime);
+        accRTTTime(clientRecvTime - clientSendTime);
+    }
+
+    
+    ResultTime result;
+    result.minsvrProcTime = min(accSvrProcTime);
+    result.minrttTime = min(accRTTTime);
+    result.maxsvrProcTime = max(accSvrProcTime);
+    result.maxrttTime = max(accRTTTime);
+    result.avgsvrProcTime = mean(accSvrProcTime);
+    result.avgrttTime = mean(accRTTTime);
+    result.quasvrProcTime = quantile(accSvrProcTime, quantile_probability=0.90);
+    result.quarttTime = quantile(accRTTTime, quantile_probability=0.90) ;
+    result.pquasvrProcTime = p_square_quantile(accSvrProcTime);
+    // 90%概率点，可能不是样本中真实存在的点
+    result.pquarttTime = p_square_quantile(accRTTTime);
+    return result;
+}

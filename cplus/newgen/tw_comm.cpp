@@ -130,7 +130,10 @@ int main( int argc, char** argv )
         SSCC_FLOG_INFO(f_logger, "All finish to calc latency");
 
         //统计延迟数据
-        tnovr.Report();
+        ResultTime resultTime = tnovr.Report();
+        control->resultTimes[groupNo] = resultTime;
+        control->isReport[groupNo] = 1;
+        
 
         SSCC_FLOG_INFO(f_logger, "Finsih report and close order and tnovr thread");
         order.Close();

@@ -34,7 +34,7 @@ public:
 
     bool IsReady();
     bool IsRun();
-    void Report();
+    ResultTime Report();
 
 private:
 
@@ -46,6 +46,9 @@ private:
     void HandleWrite(const boost::system::error_code& error);
 
     void DoClose();
+
+    void WriteResult();
+    ResultTime StatisResult();
 
 private:
     SSCC_DECLARE_MEMBER_LOGGER(m_logger);

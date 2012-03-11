@@ -30,6 +30,20 @@ struct MsgHeader
     TimeRecord time;
 };
 
+struct ResultTime
+{
+   uint64_t minsvrProcTime;
+   uint64_t minrttTime;
+   uint64_t maxsvrProcTime;
+   uint64_t maxrttTime;
+   uint64_t avgsvrProcTime;
+   uint64_t avgrttTime;
+   uint64_t quasvrProcTime;
+   uint64_t quarttTime;
+   uint64_t pquasvrProcTime;
+   uint64_t pquarttTime;
+};
+
 struct TwControlShm
 {
     char allReady;
@@ -37,7 +51,9 @@ struct TwControlShm
     char isReady[MAXCOMMNUM];
     char isFinish[MAXCOMMNUM];
     char allFinish;
+    char isReport[MAXCOMMNUM];
     int32_t sendMsgs[MAXCOMMNUM];
+    ResultTime resultTimes[MAXCOMMNUM];
 };
 
 #endif
