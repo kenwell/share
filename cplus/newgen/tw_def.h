@@ -17,8 +17,12 @@
 struct TimeRecord
 {
     timeval clientSendTime;
+    timeval orderRecvTime;
+    timeval orderSendTime;
     timeval serverRecvTime;
     timeval serverSendTime;
+    timeval tnovrRecvTime;
+    timeval tnovrSendTime;
     timeval clientRecvTime;
 };
 
@@ -32,16 +36,16 @@ struct MsgHeader
 
 struct ResultTime
 {
-   uint64_t minsvrProcTime;
-   uint64_t minrttTime;
-   uint64_t maxsvrProcTime;
-   uint64_t maxrttTime;
-   uint64_t avgsvrProcTime;
-   uint64_t avgrttTime;
-   uint64_t quasvrProcTime;
-   uint64_t quarttTime;
-   uint64_t pquasvrProcTime;
-   uint64_t pquarttTime;
+   double minsvrProcTime;
+   double minrttTime;
+   double maxsvrProcTime;
+   double maxrttTime;
+   double avgsvrProcTime;
+   double avgrttTime;
+   double quasvrProcTime;
+   double quarttTime;
+   double pquasvrProcTime;
+   double pquarttTime;
 };
 
 struct TwControlShm

@@ -124,6 +124,8 @@ void OrderClient::DoWrite( const MsgHeader& msg)
     if (!writeInProgress && m_isReady)
     {
         memcpy(m_sendData, &(m_writeMsgs.front()), sizeof(MsgHeader) );
+        MsgHeader *msgHeader = (MsgHeader*)m_sendData;
+        gettimeofday(&(msgHeader->time.orderSendTime), NULL);
         async_write(m_socket,
                     boost::asio::buffer(m_sendData,
                                         sizeof(MsgHeader) + m_writeMsgs.front().bodySize ),
@@ -140,6 +142,8 @@ void OrderClient::DoWrite()
     if (writeInProgress && m_isReady)
     {
         memcpy(m_sendData, &(m_writeMsgs.front()), sizeof(MsgHeader) );
+        MsgHeader *msgHeader = (MsgHeader*)m_sendData;
+        gettimeofday(&(msgHeader->time.orderSendTime), NULL);
         async_write(m_socket,
                     boost::asio::buffer(m_sendData,
                                         sizeof(MsgHeader) + m_writeMsgs.front().bodySize ),
@@ -159,6 +163,8 @@ void OrderClient::HandleWrite(const boost::system::error_code& error)
         if (!m_writeMsgs.empty())
         {
             memcpy(m_sendData, &(m_writeMsgs.front()), sizeof(MsgHeader) );
+            MsgHeader *msgHeader = (MsgHeader*)m_sendData;
+            gettimeofday(&(msgHeader->time.orderSendTime), NULL);
             async_write(m_socket,
                         boost::asio::buffer(m_sendData,
                                             sizeof(MsgHeader) + m_writeMsgs.front().bodySize ),
@@ -202,20 +208,21 @@ int main( int argc, char** argv )
         io_service serverIoService;
 
         OrderClient c(clientIoService, std::string(argv[1]), atoi(argv[2]));
-
+        //TwOrderServer orderServer(clientIoService, atoi(argv[3]), c);
         TwOrderServer orderServer(serverIoService, atoi(argv[3]), c);
         c.Start();
 
-        
-        boost::thread_group threadGroup;
+        boost::thread serverThread(boost::bind(&io_service::run, &serverIoService));
+        /*boost::thread_group threadGroup;
         for(int i =0; i < 1; i++)
         {
             threadGroup.create_thread(boost::bind(&io_service::run, &serverIoService));
-        }
+        }*/
         
         clientIoService.run();
 
-        threadGroup.join_all();
+        //threadGroup.join_all();
+        serverThread.join();
     }
     catch (std::exception& e)
     {

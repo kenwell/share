@@ -77,6 +77,7 @@ void TnovrClient::HandleReadHeader(const boost::system::error_code& error)
     if(!error)
     {
         MsgHeader *msgHeader = (MsgHeader*)m_recvData;
+        gettimeofday(&(msgHeader->time.tnovrRecvTime), NULL);
         //SSCC_MLOG_INFO(m_logger, format("msg headergno:%d, no:%d") % msgHeader->groupNo % msgHeader->no);
         if( msgHeader->bodySize > 0 )
         {
@@ -184,18 +185,21 @@ int main( int argc, char** argv )
         io_service serverIoService;
 
         TwTnovrServer tnovrServer(serverIoService, atoi(argv[3]), atoi(argv[4]));
+        //TwTnovrServer tnovrServer(clientIoService, atoi(argv[3]), atoi(argv[4]));
         TnovrClient c(clientIoService, std::string(argv[1]), atoi(argv[2]), tnovrServer);
         c.Start();
 
-        boost::thread_group threadGroup;
+        boost::thread serverThread(boost::bind(&io_service::run, &serverIoService));
+        /*boost::thread_group threadGroup;
         for(int i = 0; i < 1; i++)
         {
             threadGroup.create_thread(boost::bind(&io_service::run, &serverIoService));
-        }
+        }*/
 
         clientIoService.run();
 
-        threadGroup.join_all();
+        //threadGroup.join_all();
+        serverThread.join();
 
     }
     catch (std::exception& e)

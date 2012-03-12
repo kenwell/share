@@ -147,6 +147,9 @@ void TnovrServer::HandleWrite(const boost::system::error_code& error)
         if (!m_writeMsgs.empty())
         {
             memcpy(m_sendData, &(m_writeMsgs.front()), sizeof(MsgHeader) );
+            //设置发送时间，发送包
+            MsgHeader *msgHeader = (MsgHeader*)m_sendData;
+            gettimeofday(&(msgHeader->time.serverSendTime), NULL);
             async_write(m_socket,
                         boost::asio::buffer(m_sendData,
                                             sizeof(MsgHeader) + m_writeMsgs.front().bodySize ),

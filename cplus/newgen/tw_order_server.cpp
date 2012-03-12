@@ -47,6 +47,7 @@ void Session::HandleReadHeader(const boost::system::error_code& error)
         //SSCC_MLOG_INFO(m_logger, format("msg header, gno:%d, no:%d") % msgHeader->groupNo % msgHeader->no);
         if( msgHeader->bodySize > 0 )
         {
+            gettimeofday(&(msgHeader->time.orderRecvTime), NULL);
             async_read(m_socket,
                        buffer(m_recvData + sizeof(MsgHeader), msgHeader->bodySize),
                        m_strand.wrap(

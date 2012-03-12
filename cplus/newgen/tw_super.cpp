@@ -247,11 +247,16 @@ void ReportAll(int groupNo, int64_t allRecord)
             int32_t no;
             long value;
             int32_t rttTime;
+            int32_t orderTime;
+            int32_t tnovrTime;
             int32_t servTime;
-            sscanf(line, "%d, %ld, %ld, %ld, %ld, %d, %d", 
+            sscanf(line, "%d, %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld, %d, %d, %d, %d", 
                    &no, 
-                   &value, &value, &value, &value,
-                   &rttTime, &servTime); 
+                   &value, &value, &value, &value,&value, &value, &value, &value,
+                   &rttTime,
+                   &orderTime,
+                   &tnovrTime,
+                   &servTime); 
 
             accSvrProcTime(servTime);
             accRTTTime(rttTime);

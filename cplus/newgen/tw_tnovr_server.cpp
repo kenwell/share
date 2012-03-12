@@ -115,6 +115,8 @@ void Session::DoWrite( const MsgHeader& msg)
     if (!writeInProgress)
     {
         memcpy(m_sendData, &(m_writeMsgs->front()), sizeof(MsgHeader) );
+        MsgHeader *msgHeader = (MsgHeader*)m_sendData;
+        gettimeofday(&(msgHeader->time.tnovrSendTime), NULL);
         async_write(m_socket,
                     boost::asio::buffer(m_sendData,
                                         sizeof(MsgHeader) + m_writeMsgs->front().bodySize ),
@@ -132,6 +134,8 @@ void Session::DoWrite()
     if (writeInProgress)
     {
         memcpy(m_sendData, &(m_writeMsgs->front()), sizeof(MsgHeader) );
+        MsgHeader *msgHeader = (MsgHeader*)m_sendData;
+        gettimeofday(&(msgHeader->time.tnovrSendTime), NULL);
         async_write(m_socket,
                     boost::asio::buffer(m_sendData,
                                         sizeof(MsgHeader) + m_writeMsgs->front().bodySize ),
@@ -152,6 +156,8 @@ void Session::HandleWrite(const boost::system::error_code& error)
         if (!m_writeMsgs->empty())
         {
             memcpy(m_sendData, &(m_writeMsgs->front()), sizeof(MsgHeader) );
+            MsgHeader *msgHeader = (MsgHeader*)m_sendData;
+            gettimeofday(&(msgHeader->time.tnovrSendTime), NULL);
             async_write(m_socket,
                         boost::asio::buffer(m_sendData,
                                             sizeof(MsgHeader) + m_writeMsgs->front().bodySize ),

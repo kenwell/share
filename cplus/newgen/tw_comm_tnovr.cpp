@@ -144,7 +144,7 @@ void TwCommTnovr::HandleReadBody(const boost::system::error_code& error)
     {
         if(m_recvMsgs.size() == (size_t)m_msgNum)
         {
-            SSCC_MLOG_INFO(m_logger, format("Group:%d Calc msg latency") % m_groupNo );
+            //SSCC_MLOG_INFO(m_logger, format("Group:%d Calc msg latency") % m_groupNo );
             m_isRun = false;
         }
         else
@@ -206,13 +206,19 @@ void TwCommTnovr::WriteResult()
     for( i = 0; i < m_recvMsgs.size(); i++)
     {
         TimeRecord rec = m_recvMsgs[i].time;
-        fprintf( out, "%d, %ld, %ld, %ld, %ld, %ld, %ld\n", 
+        fprintf( out, "%d, %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld, %ld\n", 
                  m_recvMsgs[i].no,
                  rec.clientSendTime.tv_sec * 1000000 + rec.clientSendTime.tv_usec,
+                 rec.orderRecvTime.tv_sec * 1000000 + rec.orderRecvTime.tv_usec,
+                 rec.orderSendTime.tv_sec * 1000000 + rec.orderSendTime.tv_usec,
                  rec.serverRecvTime.tv_sec * 1000000 + rec.serverRecvTime.tv_usec,
                  rec.serverSendTime.tv_sec * 1000000 + rec.serverSendTime.tv_usec,
+                 rec.tnovrRecvTime.tv_sec * 1000000 + rec.tnovrRecvTime.tv_usec,
+                 rec.tnovrSendTime.tv_sec * 1000000 + rec.tnovrSendTime.tv_usec,
                  rec.clientRecvTime.tv_sec * 1000000 + rec.clientRecvTime.tv_usec,
                  rec.clientRecvTime.tv_sec * 1000000 + rec.clientRecvTime.tv_usec - (rec.clientSendTime.tv_sec * 1000000 + rec.clientSendTime.tv_usec),
+                 rec.orderSendTime.tv_sec * 1000000 + rec.orderSendTime.tv_usec - (rec.clientSendTime.tv_sec * 1000000 + rec.clientSendTime.tv_usec),
+                 rec.clientRecvTime.tv_sec * 1000000 + rec.clientRecvTime.tv_usec - (rec.tnovrRecvTime.tv_sec * 1000000 + rec.tnovrRecvTime.tv_usec),
                  rec.serverSendTime.tv_sec * 1000000 + rec.serverSendTime.tv_usec - (rec.serverRecvTime.tv_sec * 1000000 + rec.serverRecvTime.tv_usec)
                );
     }
@@ -223,7 +229,7 @@ void TwCommTnovr::WriteResult()
 
 ResultTime TwCommTnovr::StatisResult()
 {
-    typedef accumulator_set<double, stats<tag::p_square_quantile, tag::tail_quantile<left>, tag::mean, tag::max, tag::min> > accumulator_t;
+    typedef accumulator_set<uint64_t, stats<tag::p_square_quantile, tag::tail_quantile<left>, tag::mean, tag::max, tag::min> > accumulator_t;
 
     accumulator_t accSvrProcTime( quantile_probability=0.90, tag::tail<left>::cache_size=m_recvMsgs.size());
     accumulator_t accRTTTime( quantile_probability=0.90, tag::tail<left>::cache_size=m_recvMsgs.size());

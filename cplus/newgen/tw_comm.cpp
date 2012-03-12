@@ -71,14 +71,14 @@ int main( int argc, char** argv )
 
         //判断order和tnovr是否和服务器建立连接
         while(!order.IsReady() || !tnovr.IsReady())
-            usleep(1000);
+            usleep(100000);
 
         //设置已经建立连接
         control->isReady[groupNo] = 1;
 
         //等待所有twcomm进程完成和服务器的连接创建
         while(!control->allReady)
-            usleep(1000);
+            usleep(100000);
 
         //发送委托
         double time = (double)1000 / (double)speed;
@@ -94,17 +94,18 @@ int main( int argc, char** argv )
                 span = 1;
             long need = long(time * (double)(i+1));
 
-            if( i!= 0 && (i % 5000) == 0)
+            /*if( i!= 0 && (i % 5000) == 0)
             {
                 long speed = i * 1000 / span;
                 stringstream sstr;
                 sstr << "span:" << span << " num:" << i << " speed:" << speed;
                 SSCC_FLOG_INFO(f_logger, sstr.str());
-            }
+            }*/
 
             if(span < need )
                 usleep( (need - span) * 1000);
             MsgHeader msg;
+            memset(&msg, 0, sizeof(MsgHeader));
             msg.no = i;
             msg.groupNo = groupNo;
             msg.bodySize = bodysize;
@@ -116,7 +117,7 @@ int main( int argc, char** argv )
         //等待接受完所有成交
         while(tnovr.IsRun())
         {
-            sleep(1);
+            usleep(100000);
         }
         //已经接受所有成交
         control->isFinish[groupNo] = 1;
@@ -125,7 +126,7 @@ int main( int argc, char** argv )
         //等待所有twomm进程接受完成交
         while(!control->allFinish)
         {
-            sleep(1);
+            usleep(100000);
         }
         SSCC_FLOG_INFO(f_logger, "All finish to calc latency");
 
