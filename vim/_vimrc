@@ -382,7 +382,10 @@ au FileType asciidoc      setlocal shiftwidth=2
 " isk+=.,表示把小数点和逗号作为word的一部分
 " 需要把从http://www.vim.org/scripts/script.php?script_id=850下载的
 " pydiction文件放到~/.vim下
-au FileType python set complete+=k~/.vim/pydiction "isk+=.,
+"au FileType python set complete+=k~/.vim/tools/pydiction "isk+=.,
+let g:pydiction_location = '~/.vim/tools/pydiction/complete-dict'
+"defalut g:pydiction_menu_height == 15
+""let g:pydiction_menu_height = 20 
 
 " 设定python的makeprg
 au FileType python set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
