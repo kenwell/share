@@ -74,7 +74,7 @@ colorscheme desert
 
 set history=400  " vim记住的历史操作的数量，默认的是20
 set autoread     " 当文件在外部被修改时，自动重新读取
-set mouse=a      " 在所有模式下都允许使用鼠标，还可以是n,v,i,c等
+set mouse=v      " 在所有模式下都允许使用鼠标，还可以是n,v,i,c等
 
  
 " {{{ 开始折叠
@@ -86,7 +86,7 @@ set foldenable
 " syntax  用语法高亮来定义折叠
 " diff    对没有更改的文本进行折叠
 " marker  对文中的标志折叠
-set foldmethod=marker
+set foldmethod=manual
 "折叠相关的快捷键
 "zR 打开所有的折叠
 "za Open/Close (toggle) a folded group of lines.
@@ -100,6 +100,7 @@ set foldmethod=marker
 set foldcolumn=0
 " 设置折叠层数为
 setlocal foldlevel=1
+nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<CR>
 " 新建的文件，刚打开的文件不折叠
 autocmd! BufNewFile,BufRead * setlocal nofoldenable
 " }}}
@@ -334,7 +335,7 @@ au FileType xml           let b:vimgrep_files="**/*.xml"
 " "}}}
 
 " C/C++ autocommands "{{{
-au! BufNewFile *.h,*.c,*.cpp    set fenc=gbk ff=dos
+au! BufNewFile *.h,*.c,*.cpp    set fenc=utf-8 ff=unix
 
 au FileType c,cpp inoremap  <buffer>  /**<CR>     /**<CR><CR>/<Esc>kA<Space>@brief<Space>
 au FileType c,cpp inoremap  <buffer>  /**<        /**<<Space>@brief<Space><Space>*/<Left><Left><Left>
