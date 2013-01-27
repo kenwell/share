@@ -350,7 +350,14 @@ au FileType python set smartindent cinwords=if,elif,else,for,while,try,except,fi
 
 " Plugins " {{{
 
+" config bundle and pathogen
 let s:disabled_bundles = []
+
+" Bundle: pathogen.vim
+" http://www.vim.org/scripts/script.php?script_id=2332
+runtime bundle/pathogen.vim/plugin/pathogen.vim
+let g:pathogen_disabled = s:disabled_bundles
+call pathogen#infect() 
 
 " Bundle: AutoTag
 " http://www.vim.org/scripts/script.php?script_id=1343
@@ -572,12 +579,6 @@ au! BufEnter *.c,*.cpp let b:fswitchlocs='reg:/src/include/,reg:|src|include/**|
 " Syntaxes " {{{
 " Bundle: asciidoc.vim
 " " }}}
-
-" Bundle: pathogen.vim
-" http://www.vim.org/scripts/script.php?script_id=2332
-runtime bundle/pathogen.vim/plugin/pathogen.vim
-let g:pathogen_disabled = s:disabled_bundles
-call pathogen#infect() 
 
 " Bundle: altercation/vim-colors-solarized
 set background=dark

@@ -68,23 +68,16 @@ set ignorecase      " æœç´¢æ—¶å¿½ç•¥å¤§å°å†™
 set magic           " é¢ï¼Œè‡ªå·±:h magicå§ï¼Œä¸€è¡Œå¾ˆéš¾è§£é‡Š
 set showmatch       " æ˜¾ç¤ºåŒ¹é…çš„æ‹¬å·,ç±»ä¼¼å½“è¾“å…¥ä¸€ä¸ªå·¦æ‹¬å·æ—¶ä¼šåŒ¹é…ç›¸åº”çš„é‚£ä¸ªå³æ‹¬å·
 
-<<<<<<< HEAD
 " ä¸ä½¿ç”¨beepæˆ–flash
 set vb t_vb=
 set history=400  " vimè®°ä½çš„å†å²æ“ä½œçš„æ•°é‡ï¼Œé»˜è®¤çš„æ˜¯20
 set autoread     " å½“æ–‡ä»¶åœ¨å¤–éƒ¨è¢«ä¿®æ”¹æ—¶ï¼Œè‡ªåŠ¨é‡æ–°è¯»å–
 set mouse=a      " åœ¨æ‰€æœ‰æ¨¡å¼ä¸‹éƒ½å…è®¸ä½¿ç”¨é¼ æ ‡ï¼Œè¿˜å¯ä»¥æ˜¯n,v,i,cç­‰
-=======
-set history=400  " vim¼Ç×¡µÄÀúÊ·²Ù×÷µÄÊıÁ¿£¬Ä¬ÈÏµÄÊÇ20
-set autoread     " µ±ÎÄ¼şÔÚÍâ²¿±»ĞŞ¸ÄÊ±£¬×Ô¶¯ÖØĞÂ¶ÁÈ¡
-set mouse=v      " ÔÚËùÓĞÄ£Ê½ÏÂ¶¼ÔÊĞíÊ¹ÓÃÊó±ê£¬»¹¿ÉÒÔÊÇn,v,i,cµÈ
->>>>>>> 86baa8f307d4581f954d0fdea366400bb70c3bd0
 
 "colorscheme desert
  
 " {{{ å¼€å§‹æŠ˜å 
 set foldenable
-<<<<<<< HEAD
 " è®¾ç½®è¯­æ³•æŠ˜å 
 " manual  æ‰‹å·¥å®šä¹‰æŠ˜å 
 " indent  æ›´å¤šçš„ç¼©è¿›è¡¨ç¤ºæ›´é«˜çº§åˆ«çš„æŠ˜å 
@@ -95,18 +88,6 @@ set foldenable
 set foldmethod=marker
 "æŠ˜å ç›¸å…³çš„å¿«æ·é”®
 "zR æ‰“å¼€æ‰€æœ‰çš„æŠ˜å 
-=======
-" ÉèÖÃÓï·¨ÕÛµş
-" manual  ÊÖ¹¤¶¨ÒåÕÛµş
-" indent  ¸ü¶àµÄËõ½ø±íÊ¾¸ü¸ß¼¶±ğµÄÕÛµş
-" expr    ÓÃ±í´ïÊ½À´¶¨ÒåÕÛµş
-" syntax  ÓÃÓï·¨¸ßÁÁÀ´¶¨ÒåÕÛµş
-" diff    ¶ÔÃ»ÓĞ¸ü¸ÄµÄÎÄ±¾½øĞĞÕÛµş
-" marker  ¶ÔÎÄÖĞµÄ±êÖ¾ÕÛµş
-set foldmethod=manual
-"ÕÛµşÏà¹ØµÄ¿ì½İ¼ü
-"zR ´ò¿ªËùÓĞµÄÕÛµş
->>>>>>> 86baa8f307d4581f954d0fdea366400bb70c3bd0
 "za Open/Close (toggle) a folded group of lines.
 "zA Open a Closed fold or close and open fold recursively.
 "zi å…¨éƒ¨ å±•å¼€/å…³é—­ æŠ˜å 
@@ -118,12 +99,7 @@ set foldmethod=manual
 set foldcolumn=0
 " è®¾ç½®æŠ˜å å±‚æ•°ä¸º
 setlocal foldlevel=1
-<<<<<<< HEAD
 " æ–°å»ºçš„æ–‡ä»¶ï¼Œåˆšæ‰“å¼€çš„æ–‡ä»¶ä¸æŠ˜å 
-=======
-nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc':'zo')<CR>
-" ĞÂ½¨µÄÎÄ¼ş£¬¸Õ´ò¿ªµÄÎÄ¼ş²»ÕÛµş
->>>>>>> 86baa8f307d4581f954d0fdea366400bb70c3bd0
 autocmd! BufNewFile,BufRead * setlocal nofoldenable
 " }}}
 
@@ -318,13 +294,7 @@ au FileType python        let b:vimgrep_files="**/*.py"
 au FileType xml           let b:vimgrep_files="**/*.xml"
 " "}}}
 
-<<<<<<< HEAD
 " C++ code auto commands "{{{
-=======
-" C/C++ autocommands "{{{
-au! BufNewFile *.h,*.c,*.cpp    set fenc=utf-8 ff=unix
-
->>>>>>> 86baa8f307d4581f954d0fdea366400bb70c3bd0
 au FileType c,cpp inoremap  <buffer>  /**<CR>     /**<CR><CR>/<Esc>kA<Space>@brief<Space>
 au FileType c,cpp inoremap  <buffer>  /**<        /**<<Space>@brief<Space><Space>*/<Left><Left><Left>
 au FileType c,cpp vnoremap  <buffer>  /**<        /**<<Space>@brief<Space><Space>*/<Left><Left><Left>
@@ -380,7 +350,14 @@ au FileType python set smartindent cinwords=if,elif,else,for,while,try,except,fi
 
 " Plugins " {{{
 
+" config bundle and pathogen
 let s:disabled_bundles = []
+
+" Bundle: pathogen.vim
+" http://www.vim.org/scripts/script.php?script_id=2332
+runtime bundle/pathogen.vim/plugin/pathogen.vim
+let g:pathogen_disabled = s:disabled_bundles
+call pathogen#infect() 
 
 " Bundle: AutoTag
 " http://www.vim.org/scripts/script.php?script_id=1343
@@ -602,12 +579,6 @@ au! BufEnter *.c,*.cpp let b:fswitchlocs='reg:/src/include/,reg:|src|include/**|
 " Syntaxes " {{{
 " Bundle: asciidoc.vim
 " " }}}
-
-" Bundle: pathogen.vim
-" http://www.vim.org/scripts/script.php?script_id=2332
-runtime bundle/pathogen.vim/plugin/pathogen.vim
-let g:pathogen_disabled = s:disabled_bundles
-call pathogen#infect() 
 
 " Bundle: altercation/vim-colors-solarized
 set background=dark
