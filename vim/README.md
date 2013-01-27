@@ -7,6 +7,9 @@
      cp .vimrc $HOME/
      cp -r .vim $HOME/
 
+# .tags 目录
+存放的tag是c标准库生成的tag文件，配合ctags使用。
+
 ## 插件列表
 使用bundle管理插件，所有插件都在bundle目录下
 
