@@ -50,8 +50,8 @@ set smartindent     " 智能缩进
 set cindent         " C/C++风格缩进
 set autoindent      " 自动缩进,和上一行一样缩进
 
-" command line completion operates show match above command line  
-set wildmenu        
+" command line completion operates show match above command line
+set wildmenu
 
 " tab转化为4个字符
 set expandtab
@@ -75,7 +75,7 @@ set autoread     " 当文件在外部被修改时，自动重新读取
 set mouse=a      " 在所有模式下都允许使用鼠标，还可以是n,v,i,c等
 
 "colorscheme desert
- 
+
 " {{{ 开始折叠
 set foldenable
 " 设置语法折叠
@@ -212,14 +212,14 @@ endif
 " Coding Helper Functions "{{{
 function! RemoveTrailingSpace()
     if $VIM_HATE_SPACE_ERRORS != '0' &&
-          \(&filetype == 'c' || &filetype == 'cpp' || &filetype == 'vim')
+          \(&filetype == 'c' || &filetype == 'cpp' || &filetype == 'python' || &filetype == 'vim')
         normal m`
         silent! :%s/\s\+$//e
         normal ``
     endif
 endfunction
 
-function! OpenCProject()
+function! SetupForCLang()
     if has("cscope")
         let db = findfile("cscope.out", ";")
         if (!empty(db))
@@ -304,7 +304,7 @@ au FileType c,cpp vnoremap  <buffer>  /**<Space>  /**<Space>@brief<Space><Space>
 au FileType c,cpp setlocal include=^\\s*#\\s*include\\s*\"\\zs[^\"]*\\ze\"
 
 " Detect if the current file type is a C-like language.
-" au BufNewFile,BufRead *.c,*.cpp,*.objc,*.mm call SetupForCLang()
+au BufNewFile,BufRead *.c,*.cpp,*.objc,*.mm call SetupForCLang()
 
 " Setting for files following the GNU coding standard
 au BufEnter /usr/*                  setlocal
@@ -312,8 +312,8 @@ au BufEnter /usr/*                  setlocal
                                         \ shiftwidth=2
                                         \ tabstop=8
 
-"" Remove trailing spaces for C/C++ and Vim files
-"au BufWritePre *                  call RemoveTrailingSpace()
+"" Remove trailing spaces for C/C++, Python and Vim files
+au BufWritePre *                  call RemoveTrailingSpace()
 
 " "}}}
 
@@ -339,7 +339,7 @@ au FileType asciidoc      setlocal shiftwidth=2
 "au FileType python set complete+=k~/.vim/tools/pydiction "isk+=.,
 let g:pydiction_location = '~/.vim/tools/pydiction/complete-dict'
 "defalut g:pydiction_menu_height == 15
-""let g:pydiction_menu_height = 20 
+""let g:pydiction_menu_height = 20
 
 " 设定python的makeprg
 au FileType python set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
@@ -357,7 +357,7 @@ let s:disabled_bundles = []
 " http://www.vim.org/scripts/script.php?script_id=2332
 runtime bundle/pathogen.vim/plugin/pathogen.vim
 let g:pathogen_disabled = s:disabled_bundles
-call pathogen#infect() 
+call pathogen#infect()
 
 " Bundle: AutoTag
 " http://www.vim.org/scripts/script.php?script_id=1343
@@ -370,7 +370,7 @@ call pathogen#infect()
 if finddir("snippets-custom", &runtimepath) != ""
     let g:snippets_dir = fnamemodify(finddir("snippets-custom", &runtimepath), ":p")
 endif
-let g:snips_author = "wugl"   "wugl 
+let g:snips_author = "wugl"   "wugl
 
 " Bundle: taglist
 " http://www.vim.org/scripts/script.php?script_id=273
@@ -378,7 +378,7 @@ let g:snips_author = "wugl"   "wugl
 nmap <silent> <leader>t :TlistToggle<cr>
 "let Tlist_Ctags_Cmd = '/usr/bin/ctags'
 let Tlist_Show_One_File = 0
-let Tlist_Exit_OnlyWindow = 1 
+let Tlist_Exit_OnlyWindow = 1
 let Tlist_Use_Right_Window = 1
 let Tlist_File_Fold_Auto_Close = 1
 let Tlist_GainFocus_On_ToggleOpen = 0
@@ -390,11 +390,11 @@ let Tlist_Display_Prototype = 0
 " Bundle: OnnicppComplete
 " http://www.vim.org/scripts/script.php?script_id=1520
 set completeopt=menu
-let OmniCpp_ShowPrototypeInAbbr = 1 
+let OmniCpp_ShowPrototypeInAbbr = 1
 let OmniCpp_DefaultNamespaces = ["std"]     " 逗号分割的字符串
-let OmniCpp_MayCompleteScope = 1 
-let OmniCpp_ShowPrototypeInAbbr = 0 
-let OmniCpp_SelectFirstItem = 2 
+let OmniCpp_MayCompleteScope = 1
+let OmniCpp_ShowPrototypeInAbbr = 0
+let OmniCpp_SelectFirstItem = 2
 " c-j自动补全，当补全菜单打开时，c-j,k上下选择
 imap <expr> <c-j>      pumvisible()?"\<C-N>":"\<C-X><C-O>"
 imap <expr> <c-k>      pumvisible()?"\<C-P>":"\<esc>"
@@ -402,7 +402,7 @@ imap <expr> <c-k>      pumvisible()?"\<C-P>":"\<esc>"
 imap <C-]>             <C-X><C-]>
 imap <C-F>             <C-X><C-F>
 imap <C-D>             <C-X><C-D>
-imap <C-L>             <C-X><C-L> 
+imap <C-L>             <C-X><C-L>
 
 " Bundle: NERD_commenter
 " http://www.vim.org/scripts/script.php?script_id=1218
@@ -416,7 +416,7 @@ map <leader>cu ,cu
 " http://www.vim.org/scripts/script.php?script_id=1658
 let NERDTreeShowHidden = 1
 let NERDTreeWinPos = "right"
-let NERDTreeWinSize = s:PlugWinSize 
+let NERDTreeWinSize = s:PlugWinSize
 nmap <leader>n :NERDTreeToggle<cr>
 
 " Bundle: DoxygenToolkit.vim
@@ -432,14 +432,14 @@ function! Do_CsTag()
     let dir = getcwd()
 
     "先删除已有的tags和cscope文件，如果存在且无法删除，则报错。
-    if ( DeleteFile(dir, "tags") ) 
-        return 
+    if ( DeleteFile(dir, "tags") )
+        return
     endif
-    if ( DeleteFile(dir, "cscope.files") ) 
-        return 
+    if ( DeleteFile(dir, "cscope.files") )
+        return
     endif
-    if ( DeleteFile(dir, "cscope.out") ) 
-        return 
+    if ( DeleteFile(dir, "cscope.out") )
+        return
     endif
 
     if(executable('ctags'))
@@ -538,7 +538,7 @@ function! LookupFile_IgnoreCaseFunc(pattern)
     let files = map(tags, 'v:val["filename"]')
     return files
 endfunction
-let g:LookupFile_LookupFunc = 'LookupFile_IgnoreCaseFunc' 
+let g:LookupFile_LookupFunc = 'LookupFile_IgnoreCaseFunc'
 
 " Bundle: Buffers Explorer
 " Buffers Explorer （需要genutils.vim）
@@ -564,7 +564,7 @@ let g:winManagerWidth = 30
 let g:defaultExplorer = 0
 nmap <C-W><C-F> :FirstExplorerWindow<cr>
 nmap <C-W><C-B> :BottomExplorerWindow<cr>
-nmap <silent> <leader>wm :WMToggle<cr> 
+nmap <silent> <leader>wm :WMToggle<cr>
 
 " Bundle: FSwitch
 " http://www.vim.org/scripts/script.php?script_id=2590
